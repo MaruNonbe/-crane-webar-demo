@@ -1,4 +1,4 @@
-# Crane WebAR Demo
+# -crane-webar-demo
 
 Procedural rough-terrain crane WebAR prototype.
 

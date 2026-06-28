@@ -436,7 +436,8 @@
     const panel = document.querySelector(".panel");
     const panelToggle = document.querySelector("#panelToggle");
     const BOOM_STAGE_TRAVEL = 1.15;
-    const OUTRIGGER_SIDE_TRAVEL = 0.62;
+    const OUTRIGGER_SIDE_TRAVEL = 0.46;
+    const OUTRIGGER_BEAM_SCALE = 1.85;
     const OUTRIGGER_DOWN_TRAVEL = 0.48;
     const OUTRIGGER_LIFT = 0.28;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -703,7 +704,8 @@
 
         if (outrigger.beam) {
           const base = getBasePosition(outrigger.beam);
-          outrigger.beam.position.x = base.x + sideTravel * 0.55;
+          outrigger.beam.position.x = base.x + sideTravel * 0.5;
+          outrigger.beam.scale.x = 1 + extension * (OUTRIGGER_BEAM_SCALE - 1);
         }
 
         for (const part of [outrigger.jack, outrigger.foot]) {

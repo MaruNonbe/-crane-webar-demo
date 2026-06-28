@@ -462,7 +462,7 @@
         return v.toFixed(2);
       }),
       slew: bindRange("slew", v => {
-        setAngle(parts.turntable, "y", v);
+        setAngle(parts.turntable, "z", -v);
         return `${Math.round(v)}°`;
       }),
       boomPitch: bindRange("boomPitch", v => {
@@ -471,12 +471,12 @@
       }),
       boomExtend: bindRange("boomExtend", v => {
         const travel = v * BOOM_STAGE_TRAVEL;
-        if (parts.boomExtend) parts.boomExtend.position.z = getBasePosition(parts.boomExtend).z + travel;
-        if (parts.boomSecondExtend) parts.boomSecondExtend.position.z = getBasePosition(parts.boomSecondExtend).z + travel;
+        if (parts.boomExtend) parts.boomExtend.position.y = getBasePosition(parts.boomExtend).y + travel;
+        if (parts.boomSecondExtend) parts.boomSecondExtend.position.y = getBasePosition(parts.boomSecondExtend).y + travel;
         return `${Math.round(v * 100)}%`;
       }),
       hook: bindRange("hook", v => {
-        if (parts.hook) parts.hook.position.y = getBasePosition(parts.hook).y - v * 1.4;
+        if (parts.hook) parts.hook.position.z = getBasePosition(parts.hook).z + v * 1.4;
         return `${Math.round(v * 100)}%`;
       })
     };
@@ -655,7 +655,7 @@
       const steerAngle = state.steer * THREE.MathUtils.degToRad(28);
 
       for (const wheel of parts.frontWheels || []) {
-        wheel.rotation.y = steerAngle;
+        wheel.rotation.z = -steerAngle;
       }
 
       vehicle.rotation.y += state.speed * state.steer * 0.55 * dt;

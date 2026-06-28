@@ -215,6 +215,19 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .control-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 8px 0 12px 104px;
+    }
+
+    .control-actions button {
+      min-height: 34px;
+      font-size: 12px;
+      padding: 6px 8px;
+    }
+
     input[type="range"] {
       width: 100%;
       accent-color: var(--accent);
@@ -363,6 +376,14 @@
         <input id="hook" type="range" min="-1" max="1" value="0" step="0.01">
         <output id="hookOut">0%</output>
       </label>
+      <label class="control">アウトリガー
+        <input id="outrigger" type="range" min="0" max="1" value="0" step="0.01">
+        <output id="outriggerOut">0%</output>
+      </label>
+      <div class="control-actions">
+        <button id="outriggerRetract" type="button">格納</button>
+        <button id="outriggerDeploy" type="button">展開</button>
+      </div>
 
       <details>
         <summary>ノード確認</summary>
@@ -398,7 +419,13 @@
       boomSecondExtend: "BoomSecondExtend_Z",
       hook: "HookHoist_Y",
       hookSwing: "HookBlock_Swing",
-      cockpitAnchor: "Camera_Cockpit_View"
+      cockpitAnchor: "Camera_Cockpit_View",
+      outriggers: [
+        { side: -1, beam: "Outrigger_Front_L_Beam", jack: "Outrigger_Front_L_Jack", foot: "Outrigger_Front_L_Foot" },
+        { side: 1, beam: "Outrigger_Front_R_Beam", jack: "Outrigger_Front_R_Jack", foot: "Outrigger_Front_R_Foot" },
+        { side: -1, beam: "Outrigger_Rear_L_Beam", jack: "Outrigger_Rear_L_Jack", foot: "Outrigger_Rear_L_Foot" },
+        { side: 1, beam: "Outrigger_Rear_R_Beam", jack: "Outrigger_Rear_R_Jack", foot: "Outrigger_Rear_R_Foot" }
+      ]
     };
 
     const app = document.querySelector("#app");
@@ -409,6 +436,9 @@
     const panel = document.querySelector(".panel");
     const panelToggle = document.querySelector("#panelToggle");
     const BOOM_STAGE_TRAVEL = 1.15;
+    const OUTRIGGER_SIDE_TRAVEL = 0.62;
+    const OUTRIGGER_DOWN_TRAVEL = 0.48;
+    const OUTRIGGER_LIFT = 0.28;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -448,6 +478,7 @@
       steer: 0,
       scale: 1,
       basePositions: new Map(),
+      baseVehicleY: 0,
       view: "outside",
       lastSlew: 0,
       hookSwing: 0,
@@ -478,6 +509,10 @@
       hook: bindRange("hook", v => {
         if (parts.hook) parts.hook.position.z = getBasePosition(parts.hook).z + v * 1.4;
         return `${Math.round(v * 100)}%`;
+      }),
+      outrigger: bindRange("outrigger", v => {
+        updateOutriggers(v);
+        return `${Math.round(v * 100)}%`;
       })
     };
 
@@ -490,6 +525,9 @@
       panel.classList.toggle("collapsed");
       panelToggle.textContent = panel.classList.contains("collapsed") ? "+" : "−";
     });
+
+    document.querySelector("#outriggerRetract").addEventListener("click", () => setOutriggerControl(0));
+    document.querySelector("#outriggerDeploy").addEventListener("click", () => setOutriggerControl(1));
 
     document.querySelectorAll("[data-hold]").forEach(button => {
       const key = button.dataset.hold;
@@ -522,6 +560,9 @@
       vehicle.rotation.set(0, 0, 0);
       state.speed = 0;
       state.steer = 0;
+      state.baseVehicleY = 0;
+      ui.outrigger.value = "0";
+      ui.outrigger.dispatchEvent(new Event("input"));
     });
 
     setupARButton();
@@ -628,7 +669,14 @@
       parts.hook = PART_MAP.hook ? root.getObjectByName(PART_MAP.hook) : null;
       parts.hookSwing = PART_MAP.hookSwing ? root.getObjectByName(PART_MAP.hookSwing) : null;
       parts.cockpitAnchor = PART_MAP.cockpitAnchor ? root.getObjectByName(PART_MAP.cockpitAnchor) : null;
+      parts.outriggers = PART_MAP.outriggers.map(config => ({
+        side: config.side,
+        beam: root.getObjectByName(config.beam),
+        jack: root.getObjectByName(config.jack),
+        foot: root.getObjectByName(config.foot)
+      }));
       state.basePositions.clear();
+      state.baseVehicleY = vehicle.position.y;
     }
 
     function getBasePosition(object) {
@@ -642,6 +690,36 @@
       for (const inputEl of Object.values(ui)) {
         inputEl.dispatchEvent(new Event("input"));
       }
+    }
+
+    function updateOutriggers(value) {
+      const extension = THREE.MathUtils.clamp(value, 0, 1);
+      const liftStart = 0.82;
+      const liftRatio = THREE.MathUtils.smoothstep(extension, liftStart, 1);
+
+      for (const outrigger of parts.outriggers || []) {
+        const sideTravel = outrigger.side * extension * OUTRIGGER_SIDE_TRAVEL;
+        const downTravel = extension * OUTRIGGER_DOWN_TRAVEL;
+
+        if (outrigger.beam) {
+          const base = getBasePosition(outrigger.beam);
+          outrigger.beam.position.x = base.x + sideTravel * 0.55;
+        }
+
+        for (const part of [outrigger.jack, outrigger.foot]) {
+          if (!part) continue;
+          const base = getBasePosition(part);
+          part.position.x = base.x + sideTravel;
+          part.position.z = base.z + downTravel;
+        }
+      }
+
+      vehicle.position.y = state.baseVehicleY + liftRatio * OUTRIGGER_LIFT;
+    }
+
+    function setOutriggerControl(value) {
+      ui.outrigger.value = String(value);
+      ui.outrigger.dispatchEvent(new Event("input"));
     }
 
     function updateDrive(dt) {

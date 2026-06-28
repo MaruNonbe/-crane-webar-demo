@@ -7,6 +7,7 @@ import bpy
 SCRIPT_DIR = Path(__file__).resolve().parent
 OUTPUT_BLEND = str(SCRIPT_DIR / "webar_crane_generated.blend")
 OUTPUT_GLB = str(SCRIPT_DIR / "webar_crane_generated.glb")
+OUTPUT_USDZ = str(SCRIPT_DIR / "webar_crane_generated.usdz")
 
 
 def clear_scene():
@@ -246,6 +247,14 @@ def create_model():
         export_yup=True,
         export_apply=False,
         export_animations=True,
+    )
+    bpy.ops.wm.usd_export(
+        filepath=OUTPUT_USDZ,
+        export_animation=True,
+        export_materials=True,
+        export_textures=True,
+        export_lights=False,
+        export_cameras=False,
     )
 
 

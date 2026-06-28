@@ -6,6 +6,7 @@ Procedural rough-terrain crane WebAR prototype.
 
 - `index.html`: Three.js/WebXR demo UI
 - `webar_crane_generated.glb`: generated crane model
+- `webar_crane_generated.usdz`: iPhone/iPad AR Quick Look model
 - `create_webar_crane.py`: Blender Python generator
 - `preview_0001.png`: rendered preview
 
@@ -37,6 +38,15 @@ http://127.0.0.1:8091/index.html
 
 The demo currently loads Three.js from a CDN, so internet access is required.
 
+## Mobile AR Support
+
+- Android Chrome: uses WebXR AR through the `AR` button.
+- iPhone/iPad Safari: uses Apple AR Quick Look through the `iPhone AR` button.
+
+iPhone Safari does not currently provide the same WebXR `immersive-ar` path used by
+Android Chrome. Because of that, the iPhone AR mode opens the USDZ model in AR Quick
+Look. The web UI controls are available in the browser preview, but not inside Quick Look.
+
 ## Regenerate The Model
 
 Run inside Blender:
@@ -49,6 +59,7 @@ The script generates:
 
 - `webar_crane_generated.blend`
 - `webar_crane_generated.glb`
+- `webar_crane_generated.usdz`
 
 ## Notes
 

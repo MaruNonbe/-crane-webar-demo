@@ -305,6 +305,9 @@
 </head>
 <body>
   <div id="app"></div>
+  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz" style="display:none">
+    <img alt="Generated crane AR model" src="./preview_0001.png">
+  </a>
 
   <header class="topbar">
     <div class="brand">
@@ -402,9 +405,11 @@
     const loadState = document.querySelector("#loadState");
     const status = document.querySelector("#status");
     const nodeList = document.querySelector("#nodeList");
+    const quickLookLink = document.querySelector("#quickLookLink");
     const panel = document.querySelector(".panel");
     const panelToggle = document.querySelector("#panelToggle");
     const BOOM_STAGE_TRAVEL = 1.15;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -519,14 +524,7 @@
       state.steer = 0;
     });
 
-    const arHost = document.querySelector("#arButton");
-    const arButton = ARButton.createButton(renderer, {
-      requiredFeatures: ["hit-test"],
-      optionalFeatures: ["dom-overlay"],
-      domOverlay: { root: document.body }
-    });
-    arButton.textContent = "AR";
-    arHost.replaceWith(arButton);
+    setupARButton();
 
     new GLTFLoader().load(
       "./webar_crane_generated.glb",
@@ -568,6 +566,26 @@
       camera.updateProjectionMatrix();
       renderer.setSize(innerWidth, innerHeight);
     });
+
+    function setupARButton() {
+      const arHost = document.querySelector("#arButton");
+      if (isIOS) {
+        arHost.textContent = "iPhone AR";
+        arHost.title = "Apple AR Quick Lookで表示";
+        arHost.addEventListener("click", () => {
+          quickLookLink.click();
+        });
+        return;
+      }
+
+      const arButton = ARButton.createButton(renderer, {
+        requiredFeatures: ["hit-test"],
+        optionalFeatures: ["dom-overlay"],
+        domOverlay: { root: document.body }
+      });
+      arButton.textContent = "AR";
+      arHost.replaceWith(arButton);
+    }
 
     function bindRange(id, formatter) {
       const inputEl = document.querySelector(`#${id}`);

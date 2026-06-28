@@ -146,12 +146,14 @@ def create_model():
     cockpit = empty("Camera_Cockpit_View", (-0.62, 1.55, 1.85), parent=chassis, display="SINGLE_ARROW", size=0.3)
     cockpit["webar_role"] = "camera_anchor"
 
-    for side, x in (("L", -1.45), ("R", 1.45)):
-        for end, z in (("Front", 1.8), ("Rear", -1.8)):
-            outrigger = empty(f"Outrigger_{end}_{side}", (x, 0.6, z), parent=chassis, display="ARROWS", size=0.2)
+    for side, sign in (("L", -1), ("R", 1)):
+        for end, z in (("Front", 2.55), ("Rear", -2.55)):
+            outrigger = empty(f"Outrigger_{end}_{side}", (0, 0, z), parent=chassis, display="ARROWS", size=0.2)
             outrigger["webar_role"] = "outrigger"
-            cube_obj(f"Outrigger_{end}_{side}_Beam", (1.0, 0.18, 0.22), (0, 0, 0), steel, parent=outrigger, bevel=0.02)
-            cube_obj(f"Outrigger_{end}_{side}_Foot", (0.5, 0.1, 0.5), (0.42 if x > 0 else -0.42, -0.36, 0), dark, parent=outrigger, bevel=0.03)
+            cube_obj(f"Outrigger_{end}_{side}_Mount", (0.34, 0.24, 0.34), (sign * 1.08, 0.72, 0), crane_yellow, parent=outrigger, bevel=0.025)
+            cube_obj(f"Outrigger_{end}_{side}_Beam", (1.15, 0.18, 0.22), (sign * 1.62, 0.62, 0), steel, parent=outrigger, bevel=0.02)
+            cube_obj(f"Outrigger_{end}_{side}_Jack", (0.16, 0.64, 0.16), (sign * 2.18, 0.28, 0), steel, parent=outrigger, bevel=0.018)
+            cube_obj(f"Outrigger_{end}_{side}_Foot", (0.56, 0.1, 0.56), (sign * 2.18, -0.08, 0), dark, parent=outrigger, bevel=0.03)
 
     turntable = empty("Turntable_Yaw", (0, 1.05, -0.35), parent=root, display="ARROWS", size=0.5)
     turntable["webar_role"] = "turntable"
@@ -195,7 +197,7 @@ def create_model():
     hook_hoist["axis"] = "Y"
     hook_hoist["min"] = -2.8
     hook_hoist["max"] = 0.8
-    cable = cyl_obj("Hook_Cable", 0.018, 1.35, (0, -0.62, 0), dark, parent=hook_hoist, vertices=16, rotation=(0, 0, 0))
+    cable = cyl_obj("Hook_Cable", 0.018, 1.35, (0, -0.62, 0), dark, parent=hook_hoist, vertices=16, rotation=(math.radians(90), 0, 0))
     cable["webar_role"] = "cable"
     hook = empty("HookBlock_Swing", (0, -1.32, 0), parent=hook_hoist, display="ARROWS", size=0.25)
     hook["webar_role"] = "hook_swing"

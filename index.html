@@ -318,7 +318,7 @@
 </head>
 <body>
   <div id="app"></div>
-  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz?v=20260628-outrigger-jack-stretch" style="display:none">
+  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz?v=20260628-outrigger-stowed-inside" style="display:none">
     <img alt="Generated crane AR model" src="./preview_0001.png">
   </a>
 
@@ -435,10 +435,12 @@
     const quickLookLink = document.querySelector("#quickLookLink");
     const panel = document.querySelector(".panel");
     const panelToggle = document.querySelector("#panelToggle");
-    const ASSET_VERSION = "20260628-outrigger-jack-stretch";
+    const ASSET_VERSION = "20260628-outrigger-stowed-inside";
     const BOOM_STAGE_TRAVEL = 1.15;
-    const OUTRIGGER_SIDE_TRAVEL = 0.12;
-    const OUTRIGGER_BEAM_SCALE = 1.35;
+    const OUTRIGGER_SIDE_TRAVEL = 0;
+    const OUTRIGGER_BEAM_SHIFT = 0.38;
+    const OUTRIGGER_BEAM_SCALE = 2.3;
+    const OUTRIGGER_TIP_TRAVEL = 1.15;
     const OUTRIGGER_DOWN_TRAVEL = 0.48;
     const OUTRIGGER_JACK_BASE_LENGTH = 0.64;
     const OUTRIGGER_LIFT = 0.28;
@@ -722,25 +724,25 @@
 
         if (outrigger.beam) {
           const base = getBasePosition(outrigger.beam);
-          outrigger.beam.position.x = base.x + outrigger.side * extension * 0.18;
+          outrigger.beam.position.x = base.x + outrigger.side * extension * OUTRIGGER_BEAM_SHIFT;
           outrigger.beam.scale.x = 1 + extension * (OUTRIGGER_BEAM_SCALE - 1);
         }
 
         if (outrigger.collar) {
           const base = getBasePosition(outrigger.collar);
-          outrigger.collar.position.x = base.x + outrigger.side * extension * 0.65;
+          outrigger.collar.position.x = base.x + outrigger.side * extension * OUTRIGGER_TIP_TRAVEL;
         }
 
         if (outrigger.jack) {
           const base = getBasePosition(outrigger.jack);
-          outrigger.jack.position.x = base.x + outrigger.side * extension * 0.65;
+          outrigger.jack.position.x = base.x + outrigger.side * extension * OUTRIGGER_TIP_TRAVEL;
           outrigger.jack.position.z = base.z + downTravel * 0.5;
           outrigger.jack.scale.z = 1 + downTravel / OUTRIGGER_JACK_BASE_LENGTH;
         }
 
         if (outrigger.foot) {
           const base = getBasePosition(outrigger.foot);
-          outrigger.foot.position.x = base.x + outrigger.side * extension * 0.65;
+          outrigger.foot.position.x = base.x + outrigger.side * extension * OUTRIGGER_TIP_TRAVEL;
           outrigger.foot.position.z = base.z + downTravel;
         }
       }

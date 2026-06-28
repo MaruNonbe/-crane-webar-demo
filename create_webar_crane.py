@@ -150,11 +150,11 @@ def create_model():
         for end, z in (("Front", 2.55), ("Rear", -2.55)):
             outrigger = empty(f"Outrigger_{end}_{side}", (0, 0, z), parent=chassis, display="ARROWS", size=0.2)
             outrigger["webar_role"] = "outrigger"
-            cube_obj(f"Outrigger_{end}_{side}_Mount", (0.82, 0.28, 0.4), (sign * 1.0, 0.72, 0), crane_yellow, parent=outrigger, bevel=0.025)
-            cube_obj(f"Outrigger_{end}_{side}_Beam", (2.2, 0.2, 0.24), (sign * 1.18, 0.62, 0), steel, parent=outrigger, bevel=0.02)
-            cube_obj(f"Outrigger_{end}_{side}_Collar", (0.34, 0.24, 0.3), (sign * 2.18, 0.54, 0), steel, parent=outrigger, bevel=0.018)
-            cube_obj(f"Outrigger_{end}_{side}_Jack", (0.16, 0.64, 0.16), (sign * 2.18, 0.28, 0), steel, parent=outrigger, bevel=0.018)
-            cube_obj(f"Outrigger_{end}_{side}_Foot", (0.56, 0.1, 0.56), (sign * 2.18, -0.08, 0), dark, parent=outrigger, bevel=0.03)
+            cube_obj(f"Outrigger_{end}_{side}_Mount", (0.68, 0.28, 0.4), (sign * 0.88, 0.72, 0), crane_yellow, parent=outrigger, bevel=0.025)
+            cube_obj(f"Outrigger_{end}_{side}_Beam", (1.1, 0.2, 0.24), (sign * 0.74, 0.62, 0), steel, parent=outrigger, bevel=0.02)
+            cube_obj(f"Outrigger_{end}_{side}_Collar", (0.34, 0.24, 0.3), (sign * 1.1, 0.54, 0), steel, parent=outrigger, bevel=0.018)
+            cube_obj(f"Outrigger_{end}_{side}_Jack", (0.16, 0.64, 0.16), (sign * 1.1, 0.28, 0), steel, parent=outrigger, bevel=0.018)
+            cube_obj(f"Outrigger_{end}_{side}_Foot", (0.56, 0.1, 0.56), (sign * 1.1, -0.08, 0), dark, parent=outrigger, bevel=0.03)
 
     turntable = empty("Turntable_Yaw", (0, 1.05, -0.35), parent=root, display="ARROWS", size=0.5)
     turntable["webar_role"] = "turntable"

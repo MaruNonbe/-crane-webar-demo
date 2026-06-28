@@ -189,8 +189,29 @@ def create_model():
     cube_obj("Boom_TipHead", (0.54, 0.52, 0.22), (0, 0, 3.48), steel, parent=boom_second_extend, bevel=0.025)
     cyl_obj("Boom_TipSheave", 0.18, 0.56, (0, -0.03, 3.6), dark, parent=boom_second_extend, vertices=32, rotation=(0, math.radians(90), 0))
 
-    cyl_obj("BoomLiftCylinder_Barrel", 0.08, 1.5, (0.36, 1.22, 0.76), steel, parent=turntable, vertices=24, rotation=(math.radians(58), 0, 0))
-    cyl_obj("BoomLiftCylinder_Rod", 0.045, 1.2, (0.36, 1.63, 1.08), hydraulic, parent=turntable, vertices=24, rotation=(math.radians(58), 0, 0))
+    for side, x in (("L", -0.34), ("R", 0.34)):
+        cube_obj(f"BoomLiftCylinder_BaseBracket_{side}", (0.16, 0.2, 0.24), (x, 0.9, 0.28), steel, parent=turntable, bevel=0.018)
+        cyl_obj(
+            f"BoomLiftCylinder_Barrel_{side}",
+            0.07,
+            1.15,
+            (x, 1.08, 0.72),
+            steel,
+            parent=turntable,
+            vertices=24,
+            rotation=(math.radians(60), 0, 0),
+        )
+        cyl_obj(
+            f"BoomLiftCylinder_Rod_{side}",
+            0.04,
+            1.18,
+            (x, 1.42, 1.28),
+            hydraulic,
+            parent=turntable,
+            vertices=24,
+            rotation=(math.radians(60), 0, 0),
+        )
+        cube_obj(f"BoomLiftCylinder_BoomBracket_{side}", (0.14, 0.18, 0.2), (x, -0.24, 0.88), steel, parent=boom_pitch, bevel=0.016)
 
     hook_hoist = empty("HookHoist_Y", (0, -0.05, 3.64), parent=boom_second_extend, display="SINGLE_ARROW", size=0.3)
     hook_hoist["webar_role"] = "hook_hoist"

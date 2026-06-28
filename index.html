@@ -318,7 +318,7 @@
 </head>
 <body>
   <div id="app"></div>
-  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz?v=20260628-outrigger-jack-follow" style="display:none">
+  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz?v=20260628-outrigger-jack-stretch" style="display:none">
     <img alt="Generated crane AR model" src="./preview_0001.png">
   </a>
 
@@ -435,11 +435,12 @@
     const quickLookLink = document.querySelector("#quickLookLink");
     const panel = document.querySelector(".panel");
     const panelToggle = document.querySelector("#panelToggle");
-    const ASSET_VERSION = "20260628-outrigger-jack-follow";
+    const ASSET_VERSION = "20260628-outrigger-jack-stretch";
     const BOOM_STAGE_TRAVEL = 1.15;
     const OUTRIGGER_SIDE_TRAVEL = 0.12;
     const OUTRIGGER_BEAM_SCALE = 1.35;
     const OUTRIGGER_DOWN_TRAVEL = 0.48;
+    const OUTRIGGER_JACK_BASE_LENGTH = 0.64;
     const OUTRIGGER_LIFT = 0.28;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
@@ -721,11 +722,17 @@
           outrigger.collar.position.x = base.x + outrigger.side * extension * 0.65;
         }
 
-        for (const part of [outrigger.jack, outrigger.foot]) {
-          if (!part) continue;
-          const base = getBasePosition(part);
-          part.position.x = base.x + outrigger.side * extension * 0.65;
-          part.position.z = base.z + downTravel;
+        if (outrigger.jack) {
+          const base = getBasePosition(outrigger.jack);
+          outrigger.jack.position.x = base.x + outrigger.side * extension * 0.65;
+          outrigger.jack.position.z = base.z + downTravel * 0.5;
+          outrigger.jack.scale.z = 1 + downTravel / OUTRIGGER_JACK_BASE_LENGTH;
+        }
+
+        if (outrigger.foot) {
+          const base = getBasePosition(outrigger.foot);
+          outrigger.foot.position.x = base.x + outrigger.side * extension * 0.65;
+          outrigger.foot.position.z = base.z + downTravel;
         }
       }
 

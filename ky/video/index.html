@@ -29,10 +29,9 @@
       margin: 0 0 12px;
     }
 
-    p {
+    p, li {
       color: #c4cbd1;
       line-height: 1.7;
-      margin: 0 0 16px;
     }
 
     video {
@@ -45,6 +44,7 @@
     .actions {
       display: grid;
       gap: 10px;
+      margin: 16px 0;
     }
 
     a {
@@ -65,25 +65,36 @@
     }
 
     .note {
-      font-size: 13px;
-      color: #aeb7bf;
-      margin-top: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <main>
     <h1>クレーン車KY動画</h1>
-    <p>キャプション入り動画をiPhoneで確認・保存できます。</p>
+    <p>iPhoneで保存しやすいように、ZIP版とMP4版を用意しています。</p>
 
     <video controls playsinline preload="metadata" src="./crane-ky-captioned.mp4"></video>
 
     <div class="actions">
-      <a href="./crane-ky-captioned.mp4" download>動画をダウンロード</a>
+      <a href="./crane-ky-captioned.zip">ZIPをダウンロード（iPhone向け）</a>
+      <a class="secondary" href="./crane-ky-captioned.mp4">MP4を開く</a>
       <a class="secondary" href="../">KYデモへ戻る</a>
     </div>
 
-    <p class="note">iPhoneで保存する場合は、動画を開いた後に共有ボタンから「ビデオを保存」または「ファイルに保存」を選択してください。</p>
+    <div class="note">
+      <strong>iPhoneでの保存方法</strong>
+      <ol>
+        <li>「ZIPをダウンロード」を押します。</li>
+        <li>確認が出たら「ダウンロード」を選びます。</li>
+        <li>Safari右上または下部のダウンロード表示から、ファイルAppに保存できます。</li>
+      </ol>
+      <p>MP4を直接保存する場合は、「MP4を開く」後に共有ボタンから「ビデオを保存」または「ファイルに保存」を選択してください。</p>
+    </div>
   </main>
 </body>
 </html>

@@ -411,7 +411,7 @@
         return v.toFixed(2);
       }),
       slew: bindRange("slew", v => {
-        setAngle(parts.turntable, "y", v);
+        setAngle(parts.turntable, "z", -v);
         return `${Math.round(v)}°`;
       }),
       boomPitch: bindRange("boomPitch", v => {
@@ -419,11 +419,11 @@
         return `${Math.round(v)}°`;
       }),
       boomExtend: bindRange("boomExtend", v => {
-        if (parts.boomExtend) parts.boomExtend.position.z = 2.45 + v * 3.2;
+        if (parts.boomExtend) parts.boomExtend.position.y = 2.45 + v * 3.2;
         return `${Math.round(v * 100)}%`;
       }),
       hook: bindRange("hook", v => {
-        if (parts.hook) parts.hook.position.y = -v * 1.8;
+        if (parts.hook) parts.hook.position.z = v * 1.8;
         return `${Math.round(v * 100)}%`;
       })
     };
@@ -474,6 +474,7 @@
       "./webar_crane_generated.glb",
       gltf => {
         const model = gltf.scene;
+        model.rotation.x = Math.PI / 2;
         vehicle.add(model);
         centerModel(model);
         cacheParts(model);
@@ -570,7 +571,7 @@
       const steerAngle = state.steer * THREE.MathUtils.degToRad(28);
 
       for (const wheel of parts.frontWheels || []) {
-        wheel.rotation.y = steerAngle;
+        wheel.rotation.z = -steerAngle;
       }
 
       vehicle.rotation.y += state.speed * state.steer * 0.55 * dt;

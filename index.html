@@ -484,8 +484,13 @@
       baseVehicleY: 0,
       view: "outside",
       lastSlew: 0,
-      hookSwing: 0,
-      hookSwingVelocity: 0,
+      lastBoomPitch: 12,
+      lastBoomExtend: 0,
+      lastVehicleSpeed: 0,
+      hookSwingSide: 0,
+      hookSwingForward: 0,
+      hookSwingSideVelocity: 0,
+      hookSwingForwardVelocity: 0,
       modelReady: false
     };
 
@@ -563,6 +568,10 @@
       vehicle.rotation.set(0, 0, 0);
       state.speed = 0;
       state.steer = 0;
+      state.hookSwingSide = 0;
+      state.hookSwingForward = 0;
+      state.hookSwingSideVelocity = 0;
+      state.hookSwingForwardVelocity = 0;
       state.baseVehicleY = 0;
       ui.outrigger.value = "0";
       ui.outrigger.dispatchEvent(new Event("input"));
@@ -767,16 +776,44 @@
 
     function updateHookSwing(dt) {
       const slew = Number(ui.slew.value);
+      const boomPitch = Number(ui.boomPitch.value);
+      const boomExtend = Number(ui.boomExtend.value);
+      const hookControl = Number(ui.hook.value);
       const slewVelocity = (slew - state.lastSlew) / Math.max(dt, 0.001);
+      const boomPitchVelocity = (boomPitch - state.lastBoomPitch) / Math.max(dt, 0.001);
+      const boomExtendVelocity = (boomExtend - state.lastBoomExtend) / Math.max(dt, 0.001);
+      const driveAcceleration = (state.speed - state.lastVehicleSpeed) / Math.max(dt, 0.001);
+      const lateralAcceleration = state.speed * state.steer * 0.75;
       state.lastSlew = slew;
-      const force = THREE.MathUtils.clamp(slewVelocity / 180, -1, 1);
-      state.hookSwingVelocity += force * dt * 1.8;
-      state.hookSwingVelocity -= state.hookSwing * dt * 4.2;
-      state.hookSwingVelocity *= Math.pow(0.35, dt);
-      state.hookSwing += state.hookSwingVelocity;
+      state.lastBoomPitch = boomPitch;
+      state.lastBoomExtend = boomExtend;
+      state.lastVehicleSpeed = state.speed;
+
+      const hoistLengthFactor = 1 + (hookControl + 1) * 0.28;
+      const gravityReturn = 4.2 / hoistLengthFactor;
+      const damping = Math.pow(0.32, dt / hoistLengthFactor);
+      const sideForce = THREE.MathUtils.clamp(slewVelocity / 135 + lateralAcceleration, -1.35, 1.35);
+      const forwardForce = THREE.MathUtils.clamp(
+        -driveAcceleration * 0.55 + boomExtendVelocity * 1.1 + boomPitchVelocity / 70,
+        -1.35,
+        1.35
+      );
+
+      state.hookSwingSideVelocity += sideForce * dt * 1.7;
+      state.hookSwingForwardVelocity += forwardForce * dt * 1.7;
+      state.hookSwingSideVelocity -= state.hookSwingSide * gravityReturn * dt;
+      state.hookSwingForwardVelocity -= state.hookSwingForward * gravityReturn * dt;
+      state.hookSwingSideVelocity *= damping;
+      state.hookSwingForwardVelocity *= damping;
+      state.hookSwingSide += state.hookSwingSideVelocity;
+      state.hookSwingForward += state.hookSwingForwardVelocity;
+
+      state.hookSwingSide = THREE.MathUtils.clamp(state.hookSwingSide, -0.42, 0.42);
+      state.hookSwingForward = THREE.MathUtils.clamp(state.hookSwingForward, -0.42, 0.42);
 
       if (parts.hookSwing) {
-        parts.hookSwing.rotation.z = state.hookSwing;
+        parts.hookSwing.rotation.x = state.hookSwingForward;
+        parts.hookSwing.rotation.z = state.hookSwingSide;
       }
     }
 

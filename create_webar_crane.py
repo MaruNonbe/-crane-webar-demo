@@ -119,6 +119,7 @@ def create_model():
     white = mat("marker_white", (0.95, 0.95, 0.9, 1))
 
     root = empty("CraneVehicle_ROOT", (0, 0, 0), display="CUBE", size=0.8)
+    root.rotation_euler = (math.radians(90), 0, 0)
     root["webar_role"] = "root"
     root["description"] = "Procedural rough-terrain crane model. Named pivots are prepared for WebAR UI control."
 
@@ -176,14 +177,19 @@ def create_model():
     boom_extend["min"] = 0
     boom_extend["max"] = 3.2
     cube_obj("Boom_SecondStage", (0.44, 0.32, 2.45), (0, 0, 1.18), crane_yellow, parent=boom_extend, bevel=0.03)
-    cube_obj("Boom_ThirdStage", (0.33, 0.24, 2.15), (0, 0, 2.28), crane_yellow, parent=boom_extend, bevel=0.025)
-    cube_obj("Boom_TipHead", (0.54, 0.52, 0.22), (0, 0, 3.48), steel, parent=boom_extend, bevel=0.025)
-    cyl_obj("Boom_TipSheave", 0.18, 0.56, (0, -0.03, 3.6), dark, parent=boom_extend, vertices=32, rotation=(0, math.radians(90), 0))
+    boom_second_extend = empty("BoomSecondExtend_Z", (0, 0, 0), parent=boom_extend, display="SINGLE_ARROW", size=0.34)
+    boom_second_extend["webar_role"] = "boom_second_extend"
+    boom_second_extend["axis"] = "Z"
+    boom_second_extend["min"] = 0
+    boom_second_extend["max"] = 1.15
+    cube_obj("Boom_ThirdStage", (0.33, 0.24, 2.15), (0, 0, 2.28), crane_yellow, parent=boom_second_extend, bevel=0.025)
+    cube_obj("Boom_TipHead", (0.54, 0.52, 0.22), (0, 0, 3.48), steel, parent=boom_second_extend, bevel=0.025)
+    cyl_obj("Boom_TipSheave", 0.18, 0.56, (0, -0.03, 3.6), dark, parent=boom_second_extend, vertices=32, rotation=(0, math.radians(90), 0))
 
     cyl_obj("BoomLiftCylinder_Barrel", 0.08, 1.5, (0.36, 1.22, 0.76), steel, parent=turntable, vertices=24, rotation=(math.radians(58), 0, 0))
     cyl_obj("BoomLiftCylinder_Rod", 0.045, 1.2, (0.36, 1.63, 1.08), hydraulic, parent=turntable, vertices=24, rotation=(math.radians(58), 0, 0))
 
-    hook_hoist = empty("HookHoist_Y", (0, -0.05, 3.64), parent=boom_extend, display="SINGLE_ARROW", size=0.3)
+    hook_hoist = empty("HookHoist_Y", (0, -0.05, 3.64), parent=boom_second_extend, display="SINGLE_ARROW", size=0.3)
     hook_hoist["webar_role"] = "hook_hoist"
     hook_hoist["axis"] = "Y"
     hook_hoist["min"] = -2.8
@@ -223,9 +229,10 @@ def create_model():
         bpy.context.scene.frame_set(frame)
         turntable.rotation_euler = (0, math.radians(yaw), 0)
         boom_pitch.rotation_euler = (math.radians(-pitch), 0, 0)
-        boom_extend.location.z = 2.45 + extend
+        boom_extend.location.z = 2.45 + min(extend, 1.15)
+        boom_second_extend.location.z = min(extend, 1.15)
         hook_hoist.location.y = hook_y
-        for obj in (turntable, boom_pitch, boom_extend, hook_hoist):
+        for obj in (turntable, boom_pitch, boom_extend, boom_second_extend, hook_hoist):
             obj.keyframe_insert(data_path="rotation_euler")
             obj.keyframe_insert(data_path="location")
 

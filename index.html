@@ -421,10 +421,10 @@
       hookSwing: "HookBlock_Swing",
       cockpitAnchor: "Camera_Cockpit_View",
       outriggers: [
-        { side: -1, beam: "Outrigger_Front_L_Beam", jack: "Outrigger_Front_L_Jack", foot: "Outrigger_Front_L_Foot" },
-        { side: 1, beam: "Outrigger_Front_R_Beam", jack: "Outrigger_Front_R_Jack", foot: "Outrigger_Front_R_Foot" },
-        { side: -1, beam: "Outrigger_Rear_L_Beam", jack: "Outrigger_Rear_L_Jack", foot: "Outrigger_Rear_L_Foot" },
-        { side: 1, beam: "Outrigger_Rear_R_Beam", jack: "Outrigger_Rear_R_Jack", foot: "Outrigger_Rear_R_Foot" }
+        { side: -1, root: "Outrigger_Front_L", beam: "Outrigger_Front_L_Beam", jack: "Outrigger_Front_L_Jack", foot: "Outrigger_Front_L_Foot" },
+        { side: 1, root: "Outrigger_Front_R", beam: "Outrigger_Front_R_Beam", jack: "Outrigger_Front_R_Jack", foot: "Outrigger_Front_R_Foot" },
+        { side: -1, root: "Outrigger_Rear_L", beam: "Outrigger_Rear_L_Beam", jack: "Outrigger_Rear_L_Jack", foot: "Outrigger_Rear_L_Foot" },
+        { side: 1, root: "Outrigger_Rear_R", beam: "Outrigger_Rear_R_Beam", jack: "Outrigger_Rear_R_Jack", foot: "Outrigger_Rear_R_Foot" }
       ]
     };
 
@@ -436,8 +436,8 @@
     const panel = document.querySelector(".panel");
     const panelToggle = document.querySelector("#panelToggle");
     const BOOM_STAGE_TRAVEL = 1.15;
-    const OUTRIGGER_SIDE_TRAVEL = 0.46;
-    const OUTRIGGER_BEAM_SCALE = 1.85;
+    const OUTRIGGER_SIDE_TRAVEL = 0.36;
+    const OUTRIGGER_BEAM_SCALE = 2.55;
     const OUTRIGGER_DOWN_TRAVEL = 0.48;
     const OUTRIGGER_LIFT = 0.28;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -672,6 +672,7 @@
       parts.cockpitAnchor = PART_MAP.cockpitAnchor ? root.getObjectByName(PART_MAP.cockpitAnchor) : null;
       parts.outriggers = PART_MAP.outriggers.map(config => ({
         side: config.side,
+        root: root.getObjectByName(config.root),
         beam: root.getObjectByName(config.beam),
         jack: root.getObjectByName(config.jack),
         foot: root.getObjectByName(config.foot)
@@ -702,16 +703,20 @@
         const sideTravel = outrigger.side * extension * OUTRIGGER_SIDE_TRAVEL;
         const downTravel = extension * OUTRIGGER_DOWN_TRAVEL;
 
+        if (outrigger.root) {
+          const base = getBasePosition(outrigger.root);
+          outrigger.root.position.x = base.x + sideTravel;
+        }
+
         if (outrigger.beam) {
           const base = getBasePosition(outrigger.beam);
-          outrigger.beam.position.x = base.x + sideTravel * 0.5;
+          outrigger.beam.position.x = base.x + outrigger.side * extension * 0.18;
           outrigger.beam.scale.x = 1 + extension * (OUTRIGGER_BEAM_SCALE - 1);
         }
 
         for (const part of [outrigger.jack, outrigger.foot]) {
           if (!part) continue;
           const base = getBasePosition(part);
-          part.position.x = base.x + sideTravel;
           part.position.z = base.z + downTravel;
         }
       }

@@ -318,7 +318,7 @@
 </head>
 <body>
   <div id="app"></div>
-  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz?v=20260628-outrigger-gap" style="display:none">
+  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz?v=20260628-outrigger-jack-follow" style="display:none">
     <img alt="Generated crane AR model" src="./preview_0001.png">
   </a>
 
@@ -421,10 +421,10 @@
       hookSwing: "HookBlock_Swing",
       cockpitAnchor: "Camera_Cockpit_View",
       outriggers: [
-        { side: -1, root: "Outrigger_Front_L", beam: "Outrigger_Front_L_Beam", jack: "Outrigger_Front_L_Jack", foot: "Outrigger_Front_L_Foot" },
-        { side: 1, root: "Outrigger_Front_R", beam: "Outrigger_Front_R_Beam", jack: "Outrigger_Front_R_Jack", foot: "Outrigger_Front_R_Foot" },
-        { side: -1, root: "Outrigger_Rear_L", beam: "Outrigger_Rear_L_Beam", jack: "Outrigger_Rear_L_Jack", foot: "Outrigger_Rear_L_Foot" },
-        { side: 1, root: "Outrigger_Rear_R", beam: "Outrigger_Rear_R_Beam", jack: "Outrigger_Rear_R_Jack", foot: "Outrigger_Rear_R_Foot" }
+        { side: -1, root: "Outrigger_Front_L", beam: "Outrigger_Front_L_Beam", collar: "Outrigger_Front_L_Collar", jack: "Outrigger_Front_L_Jack", foot: "Outrigger_Front_L_Foot" },
+        { side: 1, root: "Outrigger_Front_R", beam: "Outrigger_Front_R_Beam", collar: "Outrigger_Front_R_Collar", jack: "Outrigger_Front_R_Jack", foot: "Outrigger_Front_R_Foot" },
+        { side: -1, root: "Outrigger_Rear_L", beam: "Outrigger_Rear_L_Beam", collar: "Outrigger_Rear_L_Collar", jack: "Outrigger_Rear_L_Jack", foot: "Outrigger_Rear_L_Foot" },
+        { side: 1, root: "Outrigger_Rear_R", beam: "Outrigger_Rear_R_Beam", collar: "Outrigger_Rear_R_Collar", jack: "Outrigger_Rear_R_Jack", foot: "Outrigger_Rear_R_Foot" }
       ]
     };
 
@@ -435,7 +435,7 @@
     const quickLookLink = document.querySelector("#quickLookLink");
     const panel = document.querySelector(".panel");
     const panelToggle = document.querySelector("#panelToggle");
-    const ASSET_VERSION = "20260628-outrigger-gap";
+    const ASSET_VERSION = "20260628-outrigger-jack-follow";
     const BOOM_STAGE_TRAVEL = 1.15;
     const OUTRIGGER_SIDE_TRAVEL = 0.12;
     const OUTRIGGER_BEAM_SCALE = 1.35;
@@ -675,6 +675,7 @@
         side: config.side,
         root: root.getObjectByName(config.root),
         beam: root.getObjectByName(config.beam),
+        collar: root.getObjectByName(config.collar),
         jack: root.getObjectByName(config.jack),
         foot: root.getObjectByName(config.foot)
       }));
@@ -715,9 +716,15 @@
           outrigger.beam.scale.x = 1 + extension * (OUTRIGGER_BEAM_SCALE - 1);
         }
 
+        if (outrigger.collar) {
+          const base = getBasePosition(outrigger.collar);
+          outrigger.collar.position.x = base.x + outrigger.side * extension * 0.65;
+        }
+
         for (const part of [outrigger.jack, outrigger.foot]) {
           if (!part) continue;
           const base = getBasePosition(part);
+          part.position.x = base.x + outrigger.side * extension * 0.65;
           part.position.z = base.z + downTravel;
         }
       }

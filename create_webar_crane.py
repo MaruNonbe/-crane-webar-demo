@@ -152,6 +152,7 @@ def create_model():
             outrigger["webar_role"] = "outrigger"
             cube_obj(f"Outrigger_{end}_{side}_Mount", (0.82, 0.28, 0.4), (sign * 1.0, 0.72, 0), crane_yellow, parent=outrigger, bevel=0.025)
             cube_obj(f"Outrigger_{end}_{side}_Beam", (2.2, 0.2, 0.24), (sign * 1.18, 0.62, 0), steel, parent=outrigger, bevel=0.02)
+            cube_obj(f"Outrigger_{end}_{side}_Collar", (0.34, 0.24, 0.3), (sign * 2.18, 0.54, 0), steel, parent=outrigger, bevel=0.018)
             cube_obj(f"Outrigger_{end}_{side}_Jack", (0.16, 0.64, 0.16), (sign * 2.18, 0.28, 0), steel, parent=outrigger, bevel=0.018)
             cube_obj(f"Outrigger_{end}_{side}_Foot", (0.56, 0.1, 0.56), (sign * 2.18, -0.08, 0), dark, parent=outrigger, bevel=0.03)
 

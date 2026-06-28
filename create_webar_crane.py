@@ -154,7 +154,7 @@ def create_model():
             cube_obj(f"Outrigger_{end}_{side}_Beam", (1.1, 0.2, 0.24), (sign * 0.74, 0.62, 0), steel, parent=outrigger, bevel=0.02)
             cube_obj(f"Outrigger_{end}_{side}_Collar", (0.34, 0.24, 0.3), (sign * 1.1, 0.54, 0), steel, parent=outrigger, bevel=0.018)
             cube_obj(f"Outrigger_{end}_{side}_Jack", (0.16, 0.64, 0.16), (sign * 1.1, 0.28, 0), steel, parent=outrigger, bevel=0.018)
-            cube_obj(f"Outrigger_{end}_{side}_Foot", (0.56, 0.1, 0.56), (sign * 1.1, -0.08, 0), dark, parent=outrigger, bevel=0.03)
+            cube_obj(f"Outrigger_{end}_{side}_Foot", (0.56, 0.1, 0.56), (sign * 1.1, 0.12, 0), dark, parent=outrigger, bevel=0.03)
 
     turntable = empty("Turntable_Yaw", (0, 1.05, -0.35), parent=root, display="ARROWS", size=0.5)
     turntable["webar_role"] = "turntable"

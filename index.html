@@ -688,11 +688,18 @@
         camera.position.set(target.x, target.y + 9, target.z + 0.01);
         controls.target.copy(target);
       } else if (state.view === "cockpit") {
-        const local = parts.cockpitAnchor ? parts.cockpitAnchor.getWorldPosition(new THREE.Vector3()) : new THREE.Vector3(0, 1.5, 1.1).applyMatrix4(vehicle.matrixWorld);
-        const forward = new THREE.Vector3(0, 0, 1).applyQuaternion(vehicle.quaternion);
+        const forward = new THREE.Vector3(0, 0, 1).applyAxisAngle(new THREE.Vector3(0, 1, 0), vehicle.rotation.y);
+        const right = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), vehicle.rotation.y);
         const up = new THREE.Vector3(0, 1, 0);
-        camera.position.copy(local).add(up.multiplyScalar(0.08));
-        controls.target.copy(local).add(forward.multiplyScalar(7)).add(new THREE.Vector3(0, 0.35, 0));
+        camera.position
+          .copy(target)
+          .add(forward.clone().multiplyScalar(0.95))
+          .add(right.clone().multiplyScalar(-0.42))
+          .add(up.clone().multiplyScalar(1.15));
+        controls.target
+          .copy(target)
+          .add(forward.clone().multiplyScalar(5.2))
+          .add(up.clone().multiplyScalar(0.85));
       } else {
         const offset = new THREE.Vector3(4.6, 2.8, 6.2).applyAxisAngle(new THREE.Vector3(0, 1, 0), vehicle.rotation.y);
         camera.position.copy(target).add(offset);

@@ -318,7 +318,7 @@
 </head>
 <body>
   <div id="app"></div>
-  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz" style="display:none">
+  <a id="quickLookLink" rel="ar" href="./webar_crane_generated.usdz?v=20260628-outrigger-gap" style="display:none">
     <img alt="Generated crane AR model" src="./preview_0001.png">
   </a>
 
@@ -435,9 +435,10 @@
     const quickLookLink = document.querySelector("#quickLookLink");
     const panel = document.querySelector(".panel");
     const panelToggle = document.querySelector("#panelToggle");
+    const ASSET_VERSION = "20260628-outrigger-gap";
     const BOOM_STAGE_TRAVEL = 1.15;
-    const OUTRIGGER_SIDE_TRAVEL = 0.36;
-    const OUTRIGGER_BEAM_SCALE = 2.55;
+    const OUTRIGGER_SIDE_TRAVEL = 0.12;
+    const OUTRIGGER_BEAM_SCALE = 1.35;
     const OUTRIGGER_DOWN_TRAVEL = 0.48;
     const OUTRIGGER_LIFT = 0.28;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -569,7 +570,7 @@
     setupARButton();
 
     new GLTFLoader().load(
-      "./webar_crane_generated.glb",
+      `./webar_crane_generated.glb?v=${ASSET_VERSION}`,
       gltf => {
         const model = gltf.scene;
         vehicle.add(model);
